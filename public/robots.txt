@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hishivam.com/sitemap-index.xml

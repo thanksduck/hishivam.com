@@ -7,9 +7,12 @@
     "build": "astro build",
     "preview": "astro preview --port 4322",
     "check": "biome check .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "generate-types": "wrangler types",
+    "deploy": "astro build && wrangler deploy"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^14.3.4",
     "@astrojs/react": "^7.0.0",
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.3",
@@ -19,7 +22,8 @@
     "motion": "^14.0.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "wrangler": "^4.149.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",

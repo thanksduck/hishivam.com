@@ -5,7 +5,8 @@ Portfolio for **Shivam Shukla** (hishivam.com): Astro 7 + Tailwind v4 + GSAP + L
 ```bash
 bun install
 bun run dev      # http://localhost:4322
-bun run build    # static output in dist/
+bun run build    # static output in dist/client
+bun run deploy   # build + wrangler deploy to the `hishivam` Worker (hishivam.com)
 bun run check    # Biome
 ```
 
@@ -27,3 +28,9 @@ All content lives in `src/data/`:
 | `chrome.ts` | nav pill, progress bar, active links, circular mobile menu, circular theme switch |
 
 `prefers-reduced-motion` disables the loader and all motion; touch devices get tap/drag versions of hover effects.
+
+## Deploy
+Cloudflare Workers static assets via `@astrojs/cloudflare` (`wrangler.jsonc`, Worker `hishivam`, custom domain `hishivam.com`). Pushes to `main` deploy through Workers Builds (build command `bun run build`, deploy command `bunx wrangler deploy`). `workers/www-redirect/` is a separate one-off Worker that 301s `www.hishivam.com` to the apex; redeploy it with `bunx wrangler deploy -c workers/www-redirect/wrangler.jsonc`.
+
+## SEO
+The brand name and aliases ("Hi Shivam", "hishivam", …) live in `profile.ts` (`siteName`, `aliases`) and feed the `<title>`, `og:site_name` and the WebSite/Person JSON-LD in `Base.astro`. Regenerate the social card with `bun scripts/og.mjs`.

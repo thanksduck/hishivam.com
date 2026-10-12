@@ -3,6 +3,16 @@ export const profile = {
   firstName: "Shivam",
   lastName: "Shukla",
   title: "Backend & AI Engineer",
+  /** Site brand, as people search for it. Feeds <title>, og:site_name and JSON-LD. */
+  siteName: "Hi Shivam",
+  aliases: [
+    "Hi Shivam",
+    "hishivam",
+    "HiShivam",
+    "Shivam",
+    "Shivam Shukla",
+    "sivm99",
+  ],
   roles: [
     "Backend Engineer",
     "AI Engineer",
@@ -25,7 +35,7 @@ export const profile = {
     { label: "Facebook", href: "https://n3y.in/fb" },
   ],
   about: [
-    "I'm Shivam Shukla, a 22-year-old Backend & AI Engineer from India with a passion for building elegant solutions to complex problems. Based in Ludhiana, Punjab, I've trained in machine learning and work across backend, AI and the full web stack.",
+    "Hi, I'm Shivam. Shivam Shukla, a 22-year-old Backend & AI Engineer from India with a passion for building elegant solutions to complex problems. Based in Ludhiana, Punjab, I've trained in machine learning and work across backend, AI and the full web stack.",
     "I specialise in backend development and AI: robust REST APIs, database schemas, secure authentication, LLM-powered chatbots and RAG, deployed to the cloud. Whether it's email routing, URL shorteners or traffic management systems, every project gets the same care for quality and performance.",
     "When I'm not coding, I'm exploring new tech, contributing to open source, or sharing what I learn with the developer community.",
   ],

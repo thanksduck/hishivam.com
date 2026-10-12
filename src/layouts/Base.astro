@@ -6,25 +6,67 @@ import Nav from "@/components/Nav.astro";
 import { profile } from "@/data/profile";
 import "@/styles/global.css";
 
-type Props = { title?: string; description?: string };
+type Props = { title?: string; description?: string; noindex?: boolean };
 
 const {
-  title = `${profile.name} · ${profile.title}`,
-  description = profile.summary,
+  title = `${profile.name} · ${profile.siteName} · ${profile.title}`,
+  description = `Hi, I'm Shivam Shukla, a ${profile.title} from India. ${profile.summary}`,
+  noindex = false,
 } = Astro.props;
+const site = Astro.site!.toString();
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL("/og.png", Astro.site);
+const isHome = Astro.url.pathname === "/";
 
-const personLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: profile.name,
-  jobTitle: profile.title,
-  url: Astro.site?.toString(),
-  email: `mailto:${profile.email}`,
-  telephone: `+${profile.whatsapp}`,
-  sameAs: profile.socials.map((s) => s.href),
-  alumniOf: profile.education.school,
-};
+const personId = `${site}#person`;
+const websiteId = `${site}#website`;
+const graph: Record<string, unknown>[] = [
+  {
+    "@type": "WebSite",
+    "@id": websiteId,
+    url: site,
+    name: profile.siteName,
+    alternateName: profile.aliases.filter((a) => a !== profile.siteName),
+    description,
+    inLanguage: "en",
+    publisher: { "@id": personId },
+  },
+  {
+    "@type": "Person",
+    "@id": personId,
+    name: profile.name,
+    givenName: profile.firstName,
+    familyName: profile.lastName,
+    alternateName: profile.aliases.filter((a) => a !== profile.name),
+    jobTitle: profile.title,
+    description: profile.summary,
+    url: site,
+    image: ogImage.toString(),
+    email: `mailto:${profile.email}`,
+    telephone: `+${profile.whatsapp}`,
+    sameAs: profile.socials.map((s) => s.href),
+    alumniOf: profile.education.school,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Ludhiana",
+      addressRegion: "Punjab",
+      addressCountry: "IN",
+    },
+    knowsAbout: profile.roles,
+  },
+];
+if (isHome) {
+  graph.push({
+    "@type": "ProfilePage",
+    "@id": `${site}#profile`,
+    url: site,
+    name: title,
+    isPartOf: { "@id": websiteId },
+    about: { "@id": personId },
+    mainEntity: { "@id": personId },
+  });
+}
+const jsonLd = { "@context": "https://schema.org", "@graph": graph };
 
 const bootLines = [
   { t: "$ ssh shivam@hishivam.com", c: "text-fg" },
@@ -43,11 +85,22 @@ const bootLines = [
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta property="og:type" content="website" />
+    <meta name="author" content={profile.name} />
+    <meta name="robots" content={noindex ? "noindex, follow" : "index, follow, max-image-preview:large"} />
+    <meta property="og:type" content={isHome ? "profile" : "website"} />
+    <meta property="og:site_name" content={profile.siteName} />
+    <meta property="og:locale" content="en_IN" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${profile.siteName}: ${profile.name}, ${profile.title}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="twitter:creator" content={profile.twitter.handle} />
     <meta name="theme-color" content="#07090d" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -60,7 +113,7 @@ const bootLines = [
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     />
 
-    <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <!-- Runs before paint: theme + whether motion is allowed + whether the loader was already seen. -->
     <script is:inline>
